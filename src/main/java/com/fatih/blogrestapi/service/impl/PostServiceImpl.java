@@ -3,9 +3,14 @@ package com.fatih.blogrestapi.service.impl;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.fatih.blogrestapi.dto.PostDto;
+import com.fatih.blogrestapi.dto.PostResponse;
 import com.fatih.blogrestapi.exception.ResourceNotFoundError;
 import com.fatih.blogrestapi.model.Post;
 import com.fatih.blogrestapi.repository.PostRepo;
@@ -37,16 +42,29 @@ public class PostServiceImpl implements PostService {
 
     // ?get all posts from database
     @Override
-    public List<PostDto> getAllPosts() {
+    public PostResponse getAllPosts(int pageNo, int pageSize, String sortBy, String sortDir) {
 
-        List<Post> posts = postRepo.findAll();
+        Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+        // get all Entity from database
+        // page the results
+        Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
+        Page<Post> pages = postRepo.findAll(pageable);
+
+        //
+        List<Post> posts = pages.getContent();
 
         // convert Entity to Dto
         List<PostDto> postDtos = posts.stream()
                 .map(post -> new PostDto(post.getId(), post.getTitle(), post.getContent()))
                 .collect(Collectors.toList());
+
+        // convert Dto to Response
+        PostResponse postResponse = new PostResponse(postDtos, pages.getTotalPages(), pages.getNumber() + 1,
+                pages.getSize(), pages.getTotalElements(), pages.hasNext(), pages.hasPrevious());
+
         // return Dto
-        return postDtos;
+        return postResponse;
 
     }
 
@@ -74,7 +92,6 @@ public class PostServiceImpl implements PostService {
         return updatedPostDto;
 
     }
-
 
     // ?delete post by id from database
     @Override
