@@ -1,0 +1,87 @@
+package com.fatih.blogrestapi.service.impl;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+
+import com.fatih.blogrestapi.dto.PostDto;
+import com.fatih.blogrestapi.exception.ResourceNotFoundError;
+import com.fatih.blogrestapi.model.Post;
+import com.fatih.blogrestapi.repository.PostRepo;
+import com.fatih.blogrestapi.service.PostService;
+
+@Service
+public class PostServiceImpl implements PostService {
+
+    public PostRepo postRepo;
+
+    public PostServiceImpl(PostRepo postRepo) {
+        this.postRepo = postRepo;
+    }
+
+    // ?create post and save to database
+    @Override
+    public PostDto createPost(PostDto postDto) {
+
+        // convert Dto to Entity
+        // save Entity to database
+        Post post = new Post(postDto.getId(), postDto.getTitle(), postDto.getContent());
+        Post newPost = postRepo.save(post);
+
+        // convert Entity to Dto
+        PostDto newPostDto = new PostDto(newPost.getId(), newPost.getTitle(), newPost.getContent());
+        return newPostDto;
+
+    }
+
+    // ?get all posts from database
+    @Override
+    public List<PostDto> getAllPosts() {
+
+        List<Post> posts = postRepo.findAll();
+
+        // convert Entity to Dto
+        List<PostDto> postDtos = posts.stream()
+                .map(post -> new PostDto(post.getId(), post.getTitle(), post.getContent()))
+                .collect(Collectors.toList());
+        // return Dto
+        return postDtos;
+
+    }
+
+    // ?get post by id from database
+    @Override
+    public PostDto getPostById(Long id) {
+
+        Post post = postRepo.findById(id).orElseThrow(() -> new ResourceNotFoundError("Post", "id", id));
+        PostDto postDto = new PostDto(post.getId(), post.getTitle(), post.getContent());
+        return postDto;
+
+    }
+
+    // ?update post by id from database
+    @Override
+    public PostDto updatePost(Long id, PostDto postDto) {
+
+        Post post = postRepo.findById(id).orElseThrow(() -> new ResourceNotFoundError("Post", "id", id));
+        if (postDto.getTitle() != null)
+            post.setTitle(postDto.getTitle());
+        if (postDto.getContent() != null)
+            post.setContent(postDto.getContent());
+        Post updatedPost = postRepo.save(post);
+        PostDto updatedPostDto = new PostDto(updatedPost.getId(), updatedPost.getTitle(), updatedPost.getContent());
+        return updatedPostDto;
+
+    }
+
+
+    // ?delete post by id from database
+    @Override
+    public void deletePost(Long id) {
+
+        Post post = postRepo.findById(id).orElseThrow(() -> new ResourceNotFoundError("Post", "id", id));
+        postRepo.delete(post);
+
+    }
+}
