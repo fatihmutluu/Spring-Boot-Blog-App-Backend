@@ -1,6 +1,7 @@
 package com.fatih.blogrestapi.service.impl;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
@@ -9,10 +10,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import com.fatih.blogrestapi.dto.CommentDto;
 import com.fatih.blogrestapi.dto.PostDto;
 import com.fatih.blogrestapi.dto.PostResponse;
 import com.fatih.blogrestapi.exception.ResourceNotFoundError;
+import com.fatih.blogrestapi.model.Comment;
 import com.fatih.blogrestapi.model.Post;
+import com.fatih.blogrestapi.repository.CommentRepo;
 import com.fatih.blogrestapi.repository.PostRepo;
 import com.fatih.blogrestapi.service.PostService;
 
@@ -20,9 +24,11 @@ import com.fatih.blogrestapi.service.PostService;
 public class PostServiceImpl implements PostService {
 
     public PostRepo postRepo;
+    public CommentRepo commentRepo;
 
-    public PostServiceImpl(PostRepo postRepo) {
+    public PostServiceImpl(PostRepo postRepo, CommentRepo commentRepo) {
         this.postRepo = postRepo;
+        this.commentRepo = commentRepo;
     }
 
     // ?create post and save to database
@@ -73,7 +79,13 @@ public class PostServiceImpl implements PostService {
     public PostDto getPostById(Long id) {
 
         Post post = postRepo.findById(id).orElseThrow(() -> new ResourceNotFoundError("Post", "id", id));
-        PostDto postDto = new PostDto(post.getId(), post.getTitle(), post.getContent());
+
+        Set<CommentDto> comments = commentRepo.findByPostId(id).stream()
+                .map(comment -> new CommentDto(comment.getId(), comment.getContent(), comment.getAuthor(),
+                        comment.getEmail()))
+                .collect(Collectors.toSet());
+
+        PostDto postDto = new PostDto(post.getId(), post.getTitle(), post.getContent(), comments);
         return postDto;
 
     }
