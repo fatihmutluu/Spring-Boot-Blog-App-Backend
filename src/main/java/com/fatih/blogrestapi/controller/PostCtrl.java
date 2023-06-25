@@ -4,6 +4,9 @@ import com.fatih.blogrestapi.dto.PostDto;
 import com.fatih.blogrestapi.dto.PostResponse;
 import com.fatih.blogrestapi.service.PostService;
 import com.fatih.blogrestapi.utils.AppConstants;
+
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -61,4 +64,13 @@ public class PostCtrl {
 
         return new ResponseEntity<>("Post entity deleted successfully.", HttpStatus.OK);
     }
+
+    @GetMapping("/category/{id}")
+    public ResponseEntity<List<PostDto>> getPostsByCategoryId(@PathVariable(name = "id") Long categoryId) {
+
+        List<PostDto> posts = postService.getPostsByCategoryId(categoryId);
+
+        return new ResponseEntity<>(posts, HttpStatus.OK);
+    }
+
 }

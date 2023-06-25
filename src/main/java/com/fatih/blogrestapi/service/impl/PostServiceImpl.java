@@ -12,7 +12,9 @@ import com.fatih.blogrestapi.dto.PostDto;
 import com.fatih.blogrestapi.dto.PostResponse;
 import com.fatih.blogrestapi.exception.BlogAPIException;
 import com.fatih.blogrestapi.exception.ResourceNotFoundException;
+import com.fatih.blogrestapi.model.Category;
 import com.fatih.blogrestapi.model.Post;
+import com.fatih.blogrestapi.repository.CategoryRepo;
 import com.fatih.blogrestapi.repository.PostRepo;
 import com.fatih.blogrestapi.service.PostService;
 
@@ -23,20 +25,26 @@ import java.util.stream.Collectors;
 public class PostServiceImpl implements PostService {
 
     private PostRepo postRepository;
-
+    private CategoryRepo categoryRepository;
     private ModelMapper mapper;
 
-    public PostServiceImpl(PostRepo postRepository, ModelMapper mapper) {
+    public PostServiceImpl(PostRepo postRepository, ModelMapper mapper, CategoryRepo categoryRepository) {
         this.postRepository = postRepository;
         this.mapper = mapper;
+        this.categoryRepository = categoryRepository;
     }
 
     // ?create post
     @Override
     public PostDto createPost(PostDto postDto) {
 
+        // find category by id
+        Category category = categoryRepository.findById(postDto.getCategoryId())
+                .orElseThrow(() -> new ResourceNotFoundException("Category", "id", postDto.getCategoryId()));
+
         // convert DTO to entity
         Post post = mapToEntity(postDto);
+        post.setCategory(category);
         Post newPost = postRepository.save(post);
 
         // convert entity to DTO
@@ -83,17 +91,26 @@ public class PostServiceImpl implements PostService {
     public PostDto updatePost(PostDto postDto, long id) {
         // get post by id from the database
         Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Post", "id", id));
+        // find category by id
+        Category category = categoryRepository.findById(postDto.getCategoryId())
+                .orElseThrow(() -> new ResourceNotFoundException("Category", "id", postDto.getCategoryId()));
 
         // update post
-        if (postDto.getTitle() != null && postDto.getTitle().length() >= 2)
-            post.setTitle(postDto.getTitle());
-        else
-            throw new BlogAPIException(HttpStatus.BAD_REQUEST, "Title cannot be null or less than 2 characters");
+        if (postDto.getTitle() != null) {
+            if (postDto.getTitle().length() >= 2 && postDto.getTitle().length() <= 50)
+                post.setTitle(postDto.getTitle());
+            else
+                throw new BlogAPIException(HttpStatus.BAD_REQUEST, "Title cannot be null or less than 2 characters");
+        }
 
-        if (postDto.getContent() != null && postDto.getContent().length() >= 10)
-            post.setContent(postDto.getContent());
-        else
-            throw new BlogAPIException(HttpStatus.BAD_REQUEST, "Content cannot be null or less than 10 characters");
+        if (postDto.getContent() != null) {
+            if (postDto.getContent().length() >= 10 && postDto.getContent().length() <= 400)
+                post.setContent(postDto.getContent());
+            else
+                throw new BlogAPIException(HttpStatus.BAD_REQUEST, "Content cannot be null or less than 10 characters");
+        }
+        if (postDto.getCategoryId() != null)
+            post.setCategory(category);
 
         // save post and return updated post
         Post updatedPost = postRepository.save(post);
@@ -106,6 +123,21 @@ public class PostServiceImpl implements PostService {
         // get post by id from the database and delete it
         Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Post", "id", id));
         postRepository.delete(post);
+    }
+
+    @Override
+    public List<PostDto> getPostsByCategoryId(Long categoryId) {
+        // find category by id
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new ResourceNotFoundException("Category", "id", categoryId));
+
+        // get posts by category
+        List<Post> posts = postRepository.findByCategoryId(category.getId());
+
+        // convert entity to DTO
+        List<PostDto> content = posts.stream().map(post -> mapToDTO(post)).collect(Collectors.toList());
+
+        return content;
     }
 
     // *mappers
