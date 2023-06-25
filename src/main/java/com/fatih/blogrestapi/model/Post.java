@@ -10,12 +10,15 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.HashSet;
 import java.util.Set;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 
@@ -27,19 +30,13 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name = "title", length = 100, nullable = false)
+    @Column(name = "title", nullable = false)
     private String title;
 
-    @Column(name = "content", length = 1000, nullable = false)
+    @Column(name = "content", nullable = false)
     private String content;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    Set<Comment> comments = new HashSet<>();
-
-    public Post(long id, String title, String content) {
-        this.id = id;
-        this.title = title;
-        this.content = content;
-    }
+    private Set<Comment> comments = new HashSet<>();
 
 }

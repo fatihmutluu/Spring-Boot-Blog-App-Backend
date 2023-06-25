@@ -16,7 +16,6 @@ public class PostResponse {
     public int currentPage;
     public int pageSize;
     public long totalElements;
-    public boolean hasNext;
-    public boolean hasPrevious;
-    
+    public boolean last;
+
 }

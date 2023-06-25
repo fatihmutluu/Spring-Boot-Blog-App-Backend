@@ -2,24 +2,23 @@ package com.fatih.blogrestapi.dto;
 
 import java.util.Set;
 
-import lombok.AllArgsConstructor;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
-@AllArgsConstructor
-@NoArgsConstructor
 @Data
 public class PostDto {
 
     private long id;
-    private String title;
-    private String content;
-    private Set<CommentDto> comments;
 
-    public PostDto(long id, String title, String content) {
-        this.id = id;
-        this.title = title;
-        this.content = content;
-    }
+    @NotEmpty
+    @Size(min = 2, max = 50, message = "Title must be between 2-50 characters")
+    private String title;
+
+    @NotEmpty
+    @Size(min = 10, max = 400, message = "Content must be between 10-400 characters")
+    private String content;
+
+    private Set<CommentDto> comments;
 
 }

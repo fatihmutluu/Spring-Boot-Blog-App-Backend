@@ -25,15 +25,12 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long id;
 
-    @Column(name = "content", length = 1000, nullable = false)
     public String content;
-    @Column(name = "author", length = 100, nullable = false)
     public String author;
-    @Column(name = "email", length = 100, nullable = false)
     public String email;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", nullable = false)
     public Post post;
-
+    
 }

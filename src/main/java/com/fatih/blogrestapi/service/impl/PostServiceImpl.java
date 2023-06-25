@@ -1,116 +1,123 @@
 package com.fatih.blogrestapi.service.impl;
 
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import com.fatih.blogrestapi.dto.CommentDto;
 import com.fatih.blogrestapi.dto.PostDto;
 import com.fatih.blogrestapi.dto.PostResponse;
-import com.fatih.blogrestapi.exception.ResourceNotFoundError;
-import com.fatih.blogrestapi.model.Comment;
+import com.fatih.blogrestapi.exception.BlogAPIException;
+import com.fatih.blogrestapi.exception.ResourceNotFoundException;
 import com.fatih.blogrestapi.model.Post;
-import com.fatih.blogrestapi.repository.CommentRepo;
 import com.fatih.blogrestapi.repository.PostRepo;
 import com.fatih.blogrestapi.service.PostService;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class PostServiceImpl implements PostService {
 
-    public PostRepo postRepo;
-    public CommentRepo commentRepo;
+    private PostRepo postRepository;
 
-    public PostServiceImpl(PostRepo postRepo, CommentRepo commentRepo) {
-        this.postRepo = postRepo;
-        this.commentRepo = commentRepo;
+    private ModelMapper mapper;
+
+    public PostServiceImpl(PostRepo postRepository, ModelMapper mapper) {
+        this.postRepository = postRepository;
+        this.mapper = mapper;
     }
 
-    // ?create post and save to database
+    // ?create post
     @Override
     public PostDto createPost(PostDto postDto) {
 
-        // convert Dto to Entity
-        // save Entity to database
-        Post post = new Post(postDto.getId(), postDto.getTitle(), postDto.getContent());
-        Post newPost = postRepo.save(post);
+        // convert DTO to entity
+        Post post = mapToEntity(postDto);
+        Post newPost = postRepository.save(post);
 
-        // convert Entity to Dto
-        PostDto newPostDto = new PostDto(newPost.getId(), newPost.getTitle(), newPost.getContent());
-        return newPostDto;
-
+        // convert entity to DTO
+        PostDto postResponse = mapToDTO(newPost);
+        return postResponse;
     }
 
-    // ?get all posts from database
+    // ?get all posts
     @Override
     public PostResponse getAllPosts(int pageNo, int pageSize, String sortBy, String sortDir) {
 
+        // sorting algorithm
         Sort sort = sortDir.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending()
                 : Sort.by(sortBy).descending();
-        // get all Entity from database
-        // page the results
+
+        // create Pageable instance
         Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
-        Page<Post> pages = postRepo.findAll(pageable);
 
-        //
-        List<Post> posts = pages.getContent();
+        // get page objects
+        Page<Post> posts = postRepository.findAll(pageable);
 
-        // convert Entity to Dto
-        List<PostDto> postDtos = posts.stream()
-                .map(post -> new PostDto(post.getId(), post.getTitle(), post.getContent()))
-                .collect(Collectors.toList());
+        // get content for page object
+        List<Post> listOfPosts = posts.getContent();
 
-        // convert Dto to Response
-        PostResponse postResponse = new PostResponse(postDtos, pages.getTotalPages(), pages.getNumber() + 1,
-                pages.getSize(), pages.getTotalElements(), pages.hasNext(), pages.hasPrevious());
+        // convert entity to DTO
+        List<PostDto> content = listOfPosts.stream().map(post -> mapToDTO(post)).collect(Collectors.toList());
 
-        // return Dto
+        // create PostResponse object
+        PostResponse postResponse = new PostResponse(content, posts.getTotalPages(), posts.getNumber(), posts.getSize(),
+                posts.getTotalElements(), posts.isLast());
+
         return postResponse;
-
     }
 
-    // ?get post by id from database
+    // ?get post by id
     @Override
-    public PostDto getPostById(Long id) {
-
-        Post post = postRepo.findById(id).orElseThrow(() -> new ResourceNotFoundError("Post", "id", id));
-
-        Set<CommentDto> comments = commentRepo.findByPostId(id).stream()
-                .map(comment -> new CommentDto(comment.getId(), comment.getContent(), comment.getAuthor(),
-                        comment.getEmail()))
-                .collect(Collectors.toSet());
-
-        PostDto postDto = new PostDto(post.getId(), post.getTitle(), post.getContent(), comments);
-        return postDto;
-
+    public PostDto getPostById(long id) {
+        Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Post", "id", id));
+        return mapToDTO(post);
     }
 
-    // ?update post by id from database
+    // ?update post
     @Override
-    public PostDto updatePost(Long id, PostDto postDto) {
+    public PostDto updatePost(PostDto postDto, long id) {
+        // get post by id from the database
+        Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Post", "id", id));
 
-        Post post = postRepo.findById(id).orElseThrow(() -> new ResourceNotFoundError("Post", "id", id));
-        if (postDto.getTitle() != null)
+        // update post
+        if (postDto.getTitle() != null && postDto.getTitle().length() >= 2)
             post.setTitle(postDto.getTitle());
-        if (postDto.getContent() != null)
-            post.setContent(postDto.getContent());
-        Post updatedPost = postRepo.save(post);
-        PostDto updatedPostDto = new PostDto(updatedPost.getId(), updatedPost.getTitle(), updatedPost.getContent());
-        return updatedPostDto;
+        else
+            throw new BlogAPIException(HttpStatus.BAD_REQUEST, "Title cannot be null or less than 2 characters");
 
+        if (postDto.getContent() != null && postDto.getContent().length() >= 10)
+            post.setContent(postDto.getContent());
+        else
+            throw new BlogAPIException(HttpStatus.BAD_REQUEST, "Content cannot be null or less than 10 characters");
+
+        // save post and return updated post
+        Post updatedPost = postRepository.save(post);
+        return mapToDTO(updatedPost);
     }
 
-    // ?delete post by id from database
+    // ?delete post
     @Override
-    public void deletePost(Long id) {
+    public void deletePostById(long id) {
+        // get post by id from the database and delete it
+        Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Post", "id", id));
+        postRepository.delete(post);
+    }
 
-        Post post = postRepo.findById(id).orElseThrow(() -> new ResourceNotFoundError("Post", "id", id));
-        postRepo.delete(post);
+    // *mappers
+    // convert Entity into DTO
+    private PostDto mapToDTO(Post post) {
+        PostDto postDto = mapper.map(post, PostDto.class);
+        return postDto;
+    }
 
+    // convert DTO to entity
+    private Post mapToEntity(PostDto postDto) {
+        Post post = mapper.map(postDto, Post.class);
+        return post;
     }
 }
