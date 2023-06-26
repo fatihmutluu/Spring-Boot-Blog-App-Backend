@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fatih.blogrestapi.dto.CategoryDto;
@@ -27,6 +26,8 @@ public class CategoryCtrl {
         this.categoryService = categoryService;
     }
 
+    // ! create category
+    // ! ROLE ADMIN
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CategoryDto> createCategory(@RequestBody CategoryDto categoryDto) {
@@ -34,16 +35,20 @@ public class CategoryCtrl {
         return ResponseEntity.ok(response);
     }
 
+    // ! get all categories
     @GetMapping
     public ResponseEntity<List<CategoryDto>> getAllCategories() {
         return ResponseEntity.ok(categoryService.getAllCategories());
     }
 
+    // ! get category by id
     @GetMapping("/{id}")
     public ResponseEntity<CategoryDto> getCategoryById(@PathVariable Long id) {
         return ResponseEntity.ok(categoryService.getCategoryById(id));
     }
 
+    // ! update category
+    // ! ROLE ADMIN
     @PutMapping("{id}/update")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CategoryDto> updateCategoryById(@PathVariable Long id, @RequestBody CategoryDto categoryDto) {
@@ -51,6 +56,8 @@ public class CategoryCtrl {
         return ResponseEntity.ok(categoryService.updateCategory(id, categoryDto));
     }
 
+    // ! delete category
+    // ! ROLE ADMIN
     @DeleteMapping("{id}/delete")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> deleteCategoryById(@PathVariable Long id) {

@@ -24,13 +24,13 @@ public class PostCtrl {
         this.postService = postService;
     }
 
-    // !create blog post rest api
+    // !create blog post
     @PostMapping
     public ResponseEntity<PostDto> createPost(@Valid @RequestBody PostDto postDto) {
         return new ResponseEntity<>(postService.createPost(postDto), HttpStatus.CREATED);
     }
 
-    // !get all posts rest api(starts from 1)
+    // !get all posts(pageNo starts from 1)
     @GetMapping
     public PostResponse getAllPosts(
             @RequestParam(value = "pageNo", defaultValue = AppConstants.DEFAULT_PAGE_NO, required = false) int pageNo,
@@ -46,7 +46,7 @@ public class PostCtrl {
         return ResponseEntity.ok(postService.getPostById(id));
     }
 
-    // !update post by id rest api
+    // !update post by id
     @PutMapping("/{id}/update")
     public ResponseEntity<PostDto> updatePost(@RequestBody PostDto postDto, @PathVariable(name = "id") long id) {
 
@@ -55,7 +55,8 @@ public class PostCtrl {
         return new ResponseEntity<>(postResponse, HttpStatus.OK);
     }
 
-    // !delete post rest api
+    // !delete post
+    // !ROLE ADMIN
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}/delete")
     public ResponseEntity<String> deletePost(@PathVariable(name = "id") long id) {

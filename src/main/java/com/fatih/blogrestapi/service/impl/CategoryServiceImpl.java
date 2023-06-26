@@ -7,26 +7,19 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import com.fatih.blogrestapi.dto.CategoryDto;
-import com.fatih.blogrestapi.dto.CommentDto;
 import com.fatih.blogrestapi.exception.ResourceNotFoundException;
 import com.fatih.blogrestapi.model.Category;
-import com.fatih.blogrestapi.model.Comment;
 import com.fatih.blogrestapi.repository.CategoryRepo;
-import com.fatih.blogrestapi.repository.PostRepo;
 import com.fatih.blogrestapi.service.CategoryService;
-
-import ch.qos.logback.core.model.Model;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {
 
     private CategoryRepo categoryRepository;
-    private PostRepo postRepository;
     private ModelMapper mapper;
 
-    public CategoryServiceImpl(CategoryRepo categoryRepo, PostRepo postRepository, ModelMapper mapper) {
+    public CategoryServiceImpl(CategoryRepo categoryRepo, ModelMapper mapper) {
         this.categoryRepository = categoryRepo;
-        this.postRepository = postRepository;
         this.mapper = mapper;
     }
 
@@ -42,6 +35,7 @@ public class CategoryServiceImpl implements CategoryService {
         return mapToDTO(newCategory);
     }
 
+    // ? get all categories
     @Override
     public List<CategoryDto> getAllCategories() {
 
@@ -51,6 +45,7 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryDtos;
     }
 
+    // ? get category by id
     @Override
     public CategoryDto getCategoryById(Long id) {
 
@@ -59,6 +54,7 @@ public class CategoryServiceImpl implements CategoryService {
         return mapToDTO(category);
     }
 
+    // ? update category
     @Override
     public CategoryDto updateCategory(Long id, CategoryDto categoryDto) {
 
@@ -76,6 +72,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     }
 
+    // ? delete category
     @Override
     public String deleteCategoryById(Long id) {
 

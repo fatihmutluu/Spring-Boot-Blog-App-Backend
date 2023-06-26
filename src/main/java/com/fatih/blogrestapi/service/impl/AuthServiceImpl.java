@@ -42,7 +42,7 @@ public class AuthServiceImpl implements AuthService {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
-    //? login
+    // ? login
     @Override
     public String login(LoginDto loginDto) {
 
@@ -56,25 +56,23 @@ public class AuthServiceImpl implements AuthService {
         return token;
     }
 
-    //? register
+    // ? register
     @Override
     public String register(RegisterDto registerDto) {
 
-        // add check for username exists in database
+        // check username exists in database
         if (userRepository.existsByUsername(registerDto.getUsername())) {
             throw new BlogAPIException(HttpStatus.BAD_REQUEST, "Username is already exists!.");
         }
 
-        // add check for email exists in database
+        // check email exists in database
         if (userRepository.existsByEmail(registerDto.getEmail())) {
             throw new BlogAPIException(HttpStatus.BAD_REQUEST, "Email is already exists!.");
         }
 
-        User user = new User();
-        user.setName(registerDto.getName());
-        user.setUsername(registerDto.getUsername());
-        user.setEmail(registerDto.getEmail());
-        user.setPassword(passwordEncoder.encode(registerDto.getPassword()));
+        //create user
+        User user = new User(registerDto.getName(), registerDto.getUsername(), registerDto.getEmail(),
+                registerDto.getPassword());
 
         Set<Role> roles = new HashSet<>();
         Role userRole = roleRepository.findByName("ROLE_USER").get();

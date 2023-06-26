@@ -34,7 +34,7 @@ public class PostServiceImpl implements PostService {
         this.categoryRepository = categoryRepository;
     }
 
-    // ?create post
+    // ? create post
     @Override
     public PostDto createPost(PostDto postDto) {
 
@@ -52,7 +52,7 @@ public class PostServiceImpl implements PostService {
         return postResponse;
     }
 
-    // ?get all posts
+    // ? get all posts
     @Override
     public PostResponse getAllPosts(int pageNo, int pageSize, String sortBy, String sortDir) {
 
@@ -79,14 +79,14 @@ public class PostServiceImpl implements PostService {
         return postResponse;
     }
 
-    // ?get post by id
+    // ? get post by id
     @Override
     public PostDto getPostById(long id) {
         Post post = postRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Post", "id", id));
         return mapToDTO(post);
     }
 
-    // ?update post
+    // ? update post
     @Override
     public PostDto updatePost(PostDto postDto, long id) {
         // get post by id from the database
@@ -117,7 +117,7 @@ public class PostServiceImpl implements PostService {
         return mapToDTO(updatedPost);
     }
 
-    // ?delete post
+    // ? delete post
     @Override
     public void deletePostById(long id) {
         // get post by id from the database and delete it
@@ -125,6 +125,7 @@ public class PostServiceImpl implements PostService {
         postRepository.delete(post);
     }
 
+    // ? get posts by category id
     @Override
     public List<PostDto> getPostsByCategoryId(Long categoryId) {
         // find category by id
@@ -140,6 +141,7 @@ public class PostServiceImpl implements PostService {
         return content;
     }
 
+    // ? search posts by title or content
     @Override
     public List<PostDto> searchPosts(String query) {
 
