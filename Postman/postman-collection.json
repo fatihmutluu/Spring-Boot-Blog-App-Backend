@@ -1,0 +1,498 @@
+{
+	"info": {
+		"_postman_id": "9a27f8b5-4ef9-4d2c-a28d-8840ddac2a10",
+		"name": "BLOG REST API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Post",
+			"item": [
+				{
+					"name": "Get All Posts",
+					"_postman_id": "7343d214-26f3-494b-b3ed-1548ffd13765",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseurl}}/posts?pageNo=1",
+							"host": [
+								"{{baseurl}}"
+							],
+							"path": [
+								"posts"
+							],
+							"query": [
+								{
+									"key": "pageSize",
+									"value": "5",
+									"disabled": true
+								},
+								{
+									"key": "sortBy",
+									"value": "content",
+									"disabled": true
+								},
+								{
+									"key": "sortDir",
+									"value": "des",
+									"disabled": true
+								},
+								{
+									"key": "pageNo",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Post by Id",
+					"_postman_id": "95a10036-fd6a-4f12-9e39-ba61f684f3df",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "{{baseurl}}/posts/1"
+					},
+					"response": []
+				},
+				{
+					"name": "Create New Post",
+					"_postman_id": "ec1f362d-6bea-46b9-9774-6e2862ac9445",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\r\n    \"title\":\"selam\",\r\n    \"content\":\"fatih mutlu\",\r\n    \"categoryId\":2\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseurl}}/posts"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Post by Id",
+					"_postman_id": "a329cdd3-5ca0-4ad5-9071-7552399507b8",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\r\n    \"title\":\"casdasdasdasd\",\r\n    \"content\":\"aasdasdasdasdasd\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseurl}}/posts/1/update"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Post by Id",
+					"_postman_id": "364d7897-f65e-4372-8047-d6133dc9b4df",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\r\n    \"title\":\"deneme2\",\r\n    \"content\":\"cok gusel2\"\r\n\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseurl}}/posts/2/delete"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Posts by Category Id",
+					"_postman_id": "e98d2ea0-5ea1-4078-bde8-fe3ee9b551d3",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "{{baseurl}}/posts/category/2"
+					},
+					"response": []
+				},
+				{
+					"name": "Search Posts",
+					"_postman_id": "bc4d4ca4-aa1a-4c62-9c18-15af9854ec67",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseurl}}/posts/search?query=bale",
+							"host": [
+								"{{baseurl}}"
+							],
+							"path": [
+								"posts",
+								"search"
+							],
+							"query": [
+								{
+									"key": "query",
+									"value": "bale"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"_postman_id": "b6189894-cb6e-409d-bce9-98a672a7f67f"
+		},
+		{
+			"name": "Comment",
+			"item": [
+				{
+					"name": "Create Comment",
+					"_postman_id": "9e1670f8-2388-474a-b697-d84642a2bf5b",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"content\":\"cee\",\r\n    \"author\":\"Fatih Mutlu 3\",\r\n    \"email\":\"fatih@gmail\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseurl}}/posts/1/comments"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Comment by PostId",
+					"_postman_id": "e3baa301-3586-42cc-9993-05edaa26920d",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "{{baseurl}}/posts/1/comments"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Comment by PostId and CommentId",
+					"_postman_id": "2c0db07c-cecb-46ae-b86d-cb3445a82f12",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": "{{baseurl}}/posts/1/comments/1"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Comment by PostId and CommentId Copy",
+					"_postman_id": "d7864ffe-ee28-417c-9b51-b0ef2baa90a2",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"content\":\"asdasdasdas\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseurl}}/posts/1/comments/1/update"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Comment by PostId and CommentId",
+					"_postman_id": "80959be1-95bd-43b4-8c08-5a94c26008eb",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"content\":\"ehhh\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseurl}}/posts/1/comments/2/delete"
+					},
+					"response": []
+				}
+			],
+			"_postman_id": "b7a8d8b9-d4a5-4d7c-9dce-7b5458aea9cc"
+		},
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Register",
+					"_postman_id": "e6be0619-c739-42c8-9e1c-9c59b0bdfb82",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\":\"fatih\",\r\n    \"username\":\"fatih89\",\r\n    \"email\":\"fatih@gmail.com\",\r\n    \"password\":123456\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseurl}}/auth/register"
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"_postman_id": "596868e7-7ead-4bf5-8f83-9accc438cf68",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"usernameOrEmail\":\"admin\",\r\n    \"password\":\"admin\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseurl}}/auth/login"
+					},
+					"response": []
+				}
+			],
+			"_postman_id": "9208e11c-98c4-4313-abb0-ece4256d5b78"
+		},
+		{
+			"name": "Category",
+			"item": [
+				{
+					"name": "Create Category",
+					"_postman_id": "334f3352-3938-4e67-ad61-7106bb4f3da8",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\r\n    \"name\":\"technology\",\r\n    \"description\":\"everything about technology\"\r\n\r\n\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseurl}}/categories"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Category by Id",
+					"_postman_id": "eeeabb97-a2d2-4622-a638-34d531aea5bc",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{baseurl}}/categories/1"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Categories",
+					"_postman_id": "9a9ed00e-bce1-406b-be4f-e3b69cf6fef5",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": "{{baseurl}}/categories"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Category by Id",
+					"_postman_id": "5d752538-05eb-4790-ae6f-7c1805a4878e",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\r\n    \"name\":\"tech\"\r\n\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{baseurl}}/categories/1/update"
+					},
+					"response": []
+				},
+				{
+					"name": "Delte Category by Id",
+					"_postman_id": "e8c739e2-0133-4114-ba86-2a81c1fa2133",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{token}}"
+							}
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": "{{baseurl}}/categories/1/delete"
+					},
+					"response": []
+				}
+			],
+			"_postman_id": "36c5b5dd-218f-4ad0-97b1-cc857b089288"
+		}
+	]
+}
