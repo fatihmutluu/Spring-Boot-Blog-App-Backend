@@ -1,4 +1,4 @@
-#Blog App Backend
+# Blog App Backend
 
 A backend application built with Spring Boot, Spring Security, Spring Data JPA, and MySQL. This application provides a feature-rich environment for bloggers to create, publish, and manage their articles. With its robust backend architecture.
 
