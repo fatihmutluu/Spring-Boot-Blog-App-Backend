@@ -65,10 +65,20 @@ public class PostCtrl {
         return new ResponseEntity<>("Post entity deleted successfully.", HttpStatus.OK);
     }
 
+    // !get posts by category id
     @GetMapping("/category/{id}")
     public ResponseEntity<List<PostDto>> getPostsByCategoryId(@PathVariable(name = "id") Long categoryId) {
 
         List<PostDto> posts = postService.getPostsByCategoryId(categoryId);
+
+        return new ResponseEntity<>(posts, HttpStatus.OK);
+    }
+
+    // !search posts
+    @GetMapping("/search")
+    public ResponseEntity<List<PostDto>> searchPosts(@RequestParam(name = "query") String query) {
+
+        List<PostDto> posts = postService.searchPosts(query);
 
         return new ResponseEntity<>(posts, HttpStatus.OK);
     }
